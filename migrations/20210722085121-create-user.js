@@ -11,6 +11,7 @@ module.exports = {
       taiKhoan: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       matKhau: {
         type: Sequelize.STRING,
@@ -19,6 +20,7 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       soDt: {
         type: Sequelize.STRING,

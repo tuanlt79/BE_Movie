@@ -1,4 +1,5 @@
 const { User } = require("../models");
+const bcryptjs = require("bcryptjs");
 const getListUser = async (req, res) => {
   try {
     const users = await User.findAll();
@@ -16,7 +17,7 @@ const getInfoUser = async (req, res) => {
     if (user) {
       res.status(200).send(user);
     } else {
-      res.status(404).send("Không Tìm Thấy Tài Khoản!!!");
+      res.status(404).send("Không Tìm Thấy Tài Khoản.");
     }
   } catch (error) {
     res.status(500).send(error);
@@ -28,9 +29,11 @@ const createUser = async (req, res) => {
     req.body;
 
   try {
+    const salt = bcryptjs.genSaltSync(10);
+    const hashPassword = bcryptjs.hashSync(matKhau, salt);
     const newUser = await User.create({
       taiKhoan,
-      matKhau,
+      matKhau: hashPassword,
       email,
       soDt,
       maNhom,
@@ -47,11 +50,23 @@ const updateUser = async (req, res) => {
   const { taiKhoan, email, matKhau, soDt, maNhom, maLoaiNguoiDung, hoTen } =
     req.body;
   const { id } = req.params;
+
   try {
+    const salt = bcryptjs.genSaltSync(10);
+    const hashPassword = bcryptjs.hashSync(matKhau, salt);
     const index = await User.findByPk(id);
+
     if (index !== null) {
       await User.update(
-        { taiKhoan, email, soDt, matKhau, maNhom, maLoaiNguoiDung, hoTen },
+        {
+          taiKhoan,
+          email,
+          soDt,
+          matKhau: hashPassword,
+          maNhom,
+          maLoaiNguoiDung,
+          hoTen,
+        },
         {
           where: {
             id,
@@ -78,7 +93,7 @@ const removeUser = async (req, res) => {
         },
       });
 
-      res.status(200).send(`Xoá Thành Công ${id}`);
+      res.status(200).send(`Xoá Thành Công ID ${id}`);
     } else {
       res.status(400).send(`Không Tìm Thấy ID ${id}`);
     }

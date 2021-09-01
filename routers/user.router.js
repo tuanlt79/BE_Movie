@@ -1,5 +1,4 @@
 const express = require("express");
-const { authorize } = require("../controller/auth.controller");
 const {
   getListUser,
   getInfoUser,
@@ -7,7 +6,11 @@ const {
   updateUser,
   removeUser,
 } = require("../controller/user.controller");
-const { authencate } = require("../middleware/auth/verify-token.middleware");
+const {
+  authencate,
+  authorize,
+  verifyToken,
+} = require("../middleware/auth/verify-token.middleware");
 const {
   checkExit,
   checkDoubleTaiKhoan,
@@ -19,7 +22,7 @@ const { User } = require("../models");
 //get list user
 userRouter.get("/", getListUser);
 //get user id
-userRouter.get("/:id", checkExit(User), getInfoUser);
+userRouter.get("/:id", verifyToken, authencate, checkExit(User), getInfoUser);
 // create user
 userRouter.post(
   "/",
@@ -31,6 +34,7 @@ userRouter.post(
 //  update user
 userRouter.put(
   "/:id",
+  verifyToken,
   authencate,
   authorize(["QuanTri", "Admin"]),
   checkExit(User),
@@ -40,6 +44,7 @@ userRouter.put(
 // delete user
 userRouter.delete(
   "/:id",
+  verifyToken,
   authencate,
   authorize(["QuanTri", "Admin"]),
   checkExit(User),

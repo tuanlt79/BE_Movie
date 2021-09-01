@@ -31,13 +31,4 @@ const signIn = async (req, res) => {
   }
 };
 
-const authorize = (arrRole) => (req, res, next) => {
-  const { user } = req;
-  const checkRole = arrRole.findIndex((role) => user.maLoaiNguoiDung === role);
-  if (checkRole > -1) {
-    next();
-  } else {
-    res.status(403).send("Người Dùng Không Hợp Lệ.");
-  }
-};
-module.exports = { signIn, authorize };
+module.exports = { signIn };
